@@ -1,0 +1,152 @@
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--page-background: #f4efe6;
+	--panel-background: #fffdf8;
+	--ink: #24313a;
+	--muted-ink: #65717a;
+	--accent: #d95d39;
+	--accent-dark: #a84227;
+	--line: #d9cdbd;
+	--cell-hover: #f9e1d7;
+	--shadow: 0 18px 45px rgba(64, 49, 36, 0.14);
+}
+
+body {
+	min-width: 320px;
+	min-height: 100vh;
+	margin: 0;
+	padding: 2rem 1rem;
+	background: linear-gradient(135deg, #f4efe6 0%, #e9f0ed 100%);
+	color: var(--ink);
+	font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+.game-container {
+	width: min(100%, 34rem);
+	margin: 0 auto;
+	padding: clamp(1.5rem, 5vw, 3rem);
+	background: var(--panel-background);
+	border: 1px solid rgba(217, 205, 189, 0.8);
+	box-shadow: var(--shadow);
+}
+
+h1 {
+	margin: 0 0 1.75rem;
+	color: var(--accent-dark);
+	font-family: Georgia, serif;
+	font-size: clamp(2.25rem, 8vw, 3.5rem);
+	line-height: 1;
+	text-align: center;
+}
+
+#playerForm {
+	display: grid;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
+}
+
+#playerForm > div {
+	display: grid;
+	gap: 0.4rem;
+}
+
+label {
+	color: var(--muted-ink);
+	font-size: 0.9rem;
+	font-weight: 700;
+}
+
+input {
+	width: 100%;
+	padding: 0.75rem 0.85rem;
+	border: 1px solid var(--line);
+	border-radius: 0.35rem;
+	background: #ffffff;
+	color: var(--ink);
+	font: inherit;
+}
+
+input:focus,
+button:focus-visible {
+	outline: 3px solid rgba(217, 93, 57, 0.35);
+	outline-offset: 3px;
+}
+
+button {
+	border: 0;
+	border-radius: 0.35rem;
+	color: #ffffff;
+	cursor: pointer;
+	font: inherit;
+	font-weight: 700;
+	transition: background-color 160ms ease, transform 160ms ease;
+}
+
+button:hover {
+	transform: translateY(-1px);
+}
+
+#startButton,
+#resetButton {
+	min-height: 2.75rem;
+	padding: 0.7rem 1rem;
+	background: var(--accent);
+}
+
+#startButton:hover,
+#resetButton:hover {
+	background: var(--accent-dark);
+}
+
+#gameStatus {
+	min-height: 1.5rem;
+	margin: 1.25rem 0;
+	color: var(--muted-ink);
+	font-weight: 700;
+	text-align: center;
+}
+
+.board {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.55rem;
+	width: min(100%, 25rem);
+	aspect-ratio: 1;
+	margin: 0 auto 1.5rem;
+}
+
+.cell {
+	display: grid;
+	min-width: 0;
+	min-height: 0;
+	place-items: center;
+	aspect-ratio: 1;
+	border: 2px solid var(--line);
+	background: #ffffff;
+	color: var(--accent-dark);
+	font-family: Georgia, serif;
+	font-size: clamp(2.5rem, 13vw, 5rem);
+	line-height: 1;
+}
+
+.cell:hover {
+	background: var(--cell-hover);
+}
+
+#resetButton {
+	display: block;
+	width: 100%;
+}
+
+@media (max-width: 420px) {
+	body {
+		padding: 1rem 0.75rem;
+	}
+
+	.game-container {
+		padding: 1.5rem 1rem;
+	}
+}
