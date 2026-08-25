@@ -1,189 +1,200 @@
-const Gameboard = (() => {
-	const board = ["", "", "", "", "", "", "", "", ""];
+class Gameboard {
+	constructor() {
+		this.board = ["", "", "", "", "", "", "", "", ""];
+	}
 
-	const getBoard = () => [...board];
+	getBoard() {
+		return [...this.board];
+	}
 
-	const placeMark = (index, mark) => {
-		if (board[index] !== "") {
+	placeMark(index, mark) {
+		if (this.board[index] !== "") {
 			return false;
 		}
 
-		board[index] = mark;
+		this.board[index] = mark;
 		return true;
-	};
+	}
 
-	const reset = () => {
-		board.fill("");
-	};
+	reset() {
+		this.board.fill("");
+	}
+}
 
-	return {
-		getBoard,
-		placeMark,
-		reset,
-	};
-})();
+class Player {
+	constructor(name, mark) {
+		this.name = name;
+		this.mark = mark;
+	}
+}
 
-const Player = (name, mark) => ({
-	name,
-	mark,
-});
-
-const GameController = (() => {
-	const winningCombinations = [
-		[0, 1, 2],
-		[3, 4, 5],
-		[6, 7, 8],
-		[0, 3, 6],
-		[1, 4, 7],
-		[2, 5, 8],
-		[0, 4, 8],
-		[2, 4, 6],
-	];
-
-	let players = [];
-	let currentPlayer;
-	let gameActive = false;
-
-	const startGame = (playerOneName, playerTwoName) => {
-		players = [
-			Player(playerOneName, "X"),
-			Player(playerTwoName, "O"),
+class GameController {
+	constructor(gameboard) {
+		this.gameboard = gameboard;
+		this.winningCombinations = [
+			[0, 1, 2],
+			[3, 4, 5],
+			[6, 7, 8],
+			[0, 3, 6],
+			[1, 4, 7],
+			[2, 5, 8],
+			[0, 4, 8],
+			[2, 4, 6],
 		];
-		currentPlayer = players[0];
-		gameActive = true;
-		Gameboard.reset();
+		this.players = [];
+		this.currentPlayer = null;
+		this.gameActive = false;
+	}
 
-		return currentPlayer;
-	};
+	startGame(playerOneName, playerTwoName) {
+		this.players = [
+			new Player(playerOneName, "X"),
+			new Player(playerTwoName, "O"),
+		];
+		this.currentPlayer = this.players[0];
+		this.gameActive = true;
+		this.gameboard.reset();
 
-	const hasWinner = (mark) => {
-		const board = Gameboard.getBoard();
+		return this.currentPlayer;
+	}
 
-		return winningCombinations.some((combination) =>
+	hasWinner(mark) {
+		const board = this.gameboard.getBoard();
+
+		return this.winningCombinations.some((combination) =>
 			combination.every((index) => board[index] === mark),
 		);
-	};
+	}
 
-	const playRound = (index) => {
-		if (!gameActive) {
+	playRound(index) {
+		if (!this.gameActive) {
 			return { status: "inactive" };
 		}
 
-		if (!Gameboard.placeMark(index, currentPlayer.mark)) {
-			return { status: "invalid", player: currentPlayer };
+		if (!this.gameboard.placeMark(index, this.currentPlayer.mark)) {
+			return { status: "invalid", player: this.currentPlayer };
 		}
 
-		if (hasWinner(currentPlayer.mark)) {
-			gameActive = false;
-			return { status: "winner", player: currentPlayer };
+		if (this.hasWinner(this.currentPlayer.mark)) {
+			this.gameActive = false;
+			return { status: "winner", player: this.currentPlayer };
 		}
 
-		if (Gameboard.getBoard().every((cell) => cell !== "")) {
-			gameActive = false;
+		if (this.gameboard.getBoard().every((cell) => cell !== "")) {
+			this.gameActive = false;
 			return { status: "tie" };
 		}
 
-		currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
-		return { status: "continue", player: currentPlayer };
-	};
+		this.currentPlayer = this.currentPlayer === this.players[0]
+			? this.players[1]
+			: this.players[0];
+		return { status: "continue", player: this.currentPlayer };
+	}
 
-	const restartGame = () => {
-		if (players.length === 0) {
+	restartGame() {
+		if (this.players.length === 0) {
 			return null;
 		}
 
-		currentPlayer = players[0];
-		gameActive = true;
-		Gameboard.reset();
-		return currentPlayer;
-	};
+		this.currentPlayer = this.players[0];
+		this.gameActive = true;
+		this.gameboard.reset();
+		return this.currentPlayer;
+	}
+}
 
-	return {
-		startGame,
-		playRound,
-		restartGame,
-	};
-})();
+class DisplayController {
+	constructor(gameboard, gameController) {
+		this.gameboard = gameboard;
+		this.gameController = gameController;
+		this.playerForm = document.querySelector("#playerForm");
+		this.playerOneNameInput = document.querySelector("#playerOneName");
+		this.playerTwoNameInput = document.querySelector("#playerTwoName");
+		this.gameStatus = document.querySelector("#gameStatus");
+		this.boardElement = document.querySelector("#board");
+		this.cells = document.querySelectorAll(".cell");
+		this.resetButton = document.querySelector("#resetButton");
 
-const DisplayController = (() => {
-	const playerForm = document.querySelector("#playerForm");
-	const playerOneNameInput = document.querySelector("#playerOneName");
-	const playerTwoNameInput = document.querySelector("#playerTwoName");
-	const gameStatus = document.querySelector("#gameStatus");
-	const boardElement = document.querySelector("#board");
-	const cells = document.querySelectorAll(".cell");
-	const resetButton = document.querySelector("#resetButton");
+		this.bindEvents();
+		this.renderBoard();
+		this.setBoardEnabled(false);
+	}
 
-	const renderBoard = () => {
-		const board = Gameboard.getBoard();
+	renderBoard() {
+		const board = this.gameboard.getBoard();
 
-		cells.forEach((cell, index) => {
+		this.cells.forEach((cell, index) => {
 			cell.textContent = board[index];
 		});
-	};
+	}
 
-	const setBoardEnabled = (isEnabled) => {
-		cells.forEach((cell) => {
+	setBoardEnabled(isEnabled) {
+		this.cells.forEach((cell) => {
 			cell.disabled = !isEnabled;
 		});
-	};
+	}
 
-	const updateStatus = (result) => {
+	updateStatus(result) {
 		if (result.status === "winner") {
-			gameStatus.textContent = `${result.player.name} wins!`;
-			setBoardEnabled(false);
+			this.gameStatus.textContent = `${result.player.name} wins!`;
+			this.setBoardEnabled(false);
 			return;
 		}
 
 		if (result.status === "tie") {
-			gameStatus.textContent = "It's a tie!";
-			setBoardEnabled(false);
+			this.gameStatus.textContent = "It's a tie!";
+			this.setBoardEnabled(false);
 			return;
 		}
 
 		if (result.status === "continue") {
-			gameStatus.textContent = `${result.player.name}'s turn`;
+			this.gameStatus.textContent = `${result.player.name}'s turn`;
 		}
-	};
+	}
 
-	playerForm.addEventListener("submit", (event) => {
-		event.preventDefault();
+	bindEvents() {
+		this.playerForm.addEventListener("submit", (event) => {
+			event.preventDefault();
 
-		const currentPlayer = GameController.startGame(
-			playerOneNameInput.value.trim(),
-			playerTwoNameInput.value.trim(),
-		);
+			const currentPlayer = this.gameController.startGame(
+				this.playerOneNameInput.value.trim(),
+				this.playerTwoNameInput.value.trim(),
+			);
 
-		renderBoard();
-		setBoardEnabled(true);
-		gameStatus.textContent = `${currentPlayer.name}'s turn`;
-	});
+			this.renderBoard();
+			this.setBoardEnabled(true);
+			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
+		});
 
-	boardElement.addEventListener("click", (event) => {
-		const clickedCell = event.target.closest(".cell");
+		this.boardElement.addEventListener("click", (event) => {
+			const clickedCell = event.target.closest(".cell");
 
-		if (!clickedCell) {
-			return;
-		}
+			if (!clickedCell) {
+				return;
+			}
 
-		const result = GameController.playRound(Number(clickedCell.dataset.index));
-		renderBoard();
-		updateStatus(result);
-	});
+			const result = this.gameController.playRound(
+				Number(clickedCell.dataset.index),
+			);
+			this.renderBoard();
+			this.updateStatus(result);
+		});
 
-	resetButton.addEventListener("click", () => {
-		const currentPlayer = GameController.restartGame();
+		this.resetButton.addEventListener("click", () => {
+			const currentPlayer = this.gameController.restartGame();
 
-		if (!currentPlayer) {
-			gameStatus.textContent = "Enter player names to start.";
-			return;
-		}
+			if (!currentPlayer) {
+				this.gameStatus.textContent = "Enter player names to start.";
+				return;
+			}
 
-		renderBoard();
-		setBoardEnabled(true);
-		gameStatus.textContent = `${currentPlayer.name}'s turn`;
-	});
+			this.renderBoard();
+			this.setBoardEnabled(true);
+			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
+		});
+	}
+}
 
-	renderBoard();
-	setBoardEnabled(false);
-})();
+const gameboard = new Gameboard();
+const gameController = new GameController(gameboard);
+new DisplayController(gameboard, gameController);
