@@ -9,8 +9,11 @@
 	--muted-ink: #65717a;
 	--accent: #d95d39;
 	--accent-dark: #a84227;
+	--x-color: #247a78;
+	--o-color: #c4573c;
 	--line: #d9cdbd;
 	--cell-hover: #f9e1d7;
+	--winning: #f5c85b;
 	--shadow: 0 18px 45px rgba(64, 49, 36, 0.14);
 }
 
@@ -104,9 +107,21 @@ button:hover {
 #gameStatus {
 	min-height: 1.5rem;
 	margin: 1.25rem 0;
+	padding: 0.65rem 1rem;
+	border: 1px solid var(--line);
+	border-radius: 0.35rem;
+	background: rgba(255, 255, 255, 0.68);
 	color: var(--muted-ink);
 	font-weight: 700;
 	text-align: center;
+	transition: background-color 220ms ease, color 220ms ease, transform 220ms ease;
+}
+
+.game-status--result {
+	background: #fff3c9;
+	border-color: var(--winning);
+	color: #6f5111;
+	transform: scale(1.02);
 }
 
 .board {
@@ -126,19 +141,64 @@ button:hover {
 	aspect-ratio: 1;
 	border: 2px solid var(--line);
 	background: #ffffff;
-	color: var(--accent-dark);
+	color: var(--ink);
 	font-family: Georgia, serif;
 	font-size: clamp(2.5rem, 13vw, 5rem);
 	line-height: 1;
+	transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
-.cell:hover {
+.cell:hover:not(:disabled) {
 	background: var(--cell-hover);
+	border-color: var(--accent);
+}
+
+.cell:disabled {
+	cursor: default;
+	opacity: 1;
+}
+
+.cell--x {
+	color: var(--x-color);
+	animation: mark-pop 220ms ease both;
+}
+
+.cell--o {
+	color: var(--o-color);
+	animation: mark-pop 220ms ease both;
+}
+
+.cell--winning {
+	background: var(--winning);
+	border-color: #d29b22;
+	color: #3d321d;
+	box-shadow: 0 0 0 3px rgba(245, 200, 91, 0.24);
+	animation: winning-pulse 900ms ease-in-out infinite alternate;
 }
 
 #resetButton {
 	display: block;
 	width: 100%;
+}
+
+@keyframes mark-pop {
+	from {
+		opacity: 0;
+		transform: scale(0.75);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes winning-pulse {
+	from {
+		transform: scale(1);
+	}
+	to {
+		transform: scale(1.025);
+	}
 }
 
 @media (max-width: 420px) {
@@ -148,5 +208,15 @@ button:hover {
 
 	.game-container {
 		padding: 1.5rem 1rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
 	}
 }

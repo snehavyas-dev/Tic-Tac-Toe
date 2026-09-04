@@ -61,9 +61,9 @@ class GameController {
 	hasWinner(mark) {
 		const board = this.gameboard.getBoard();
 
-		return this.winningCombinations.some((combination) =>
+		return this.winningCombinations.find((combination) =>
 			combination.every((index) => board[index] === mark),
-		);
+		) ?? null;
 	}
 
 	playRound(index) {
@@ -75,9 +75,15 @@ class GameController {
 			return { status: "invalid", player: this.currentPlayer };
 		}
 
-		if (this.hasWinner(this.currentPlayer.mark)) {
+		const winningCombination = this.hasWinner(this.currentPlayer.mark);
+
+		if (winningCombination) {
 			this.gameActive = false;
-			return { status: "winner", player: this.currentPlayer };
+			return {
+				status: "winner",
+				player: this.currentPlayer,
+				winningCombination,
+			};
 		}
 
 		if (this.gameboard.getBoard().every((cell) => cell !== "")) {
@@ -125,6 +131,21 @@ class DisplayController {
 
 		this.cells.forEach((cell, index) => {
 			cell.textContent = board[index];
+			cell.classList.remove("cell--x", "cell--o", "cell--winning");
+
+			if (board[index] === "X") {
+				cell.classList.add("cell--x");
+			}
+
+			if (board[index] === "O") {
+				cell.classList.add("cell--o");
+			}
+		});
+	}
+
+	highlightWinningCells(winningCombination) {
+		winningCombination.forEach((index) => {
+			this.cells[index].classList.add("cell--winning");
 		});
 	}
 
@@ -137,12 +158,15 @@ class DisplayController {
 	updateStatus(result) {
 		if (result.status === "winner") {
 			this.gameStatus.textContent = `${result.player.name} wins!`;
+			this.gameStatus.classList.add("game-status--result");
+			this.highlightWinningCells(result.winningCombination);
 			this.setBoardEnabled(false);
 			return;
 		}
 
 		if (result.status === "tie") {
 			this.gameStatus.textContent = "It's a tie!";
+			this.gameStatus.classList.add("game-status--result");
 			this.setBoardEnabled(false);
 			return;
 		}
@@ -163,6 +187,7 @@ class DisplayController {
 
 			this.renderBoard();
 			this.setBoardEnabled(true);
+			this.gameStatus.classList.remove("game-status--result");
 			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
 		});
 
@@ -190,6 +215,7 @@ class DisplayController {
 
 			this.renderBoard();
 			this.setBoardEnabled(true);
+			this.gameStatus.classList.remove("game-status--result");
 			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
 		});
 	}
