@@ -44,6 +44,7 @@ class GameController {
 		this.players = [];
 		this.currentPlayer = null;
 		this.gameActive = false;
+		this.scores = { X: 0, O: 0 };
 	}
 
 	startGame(playerOneName, playerTwoName) {
@@ -53,6 +54,7 @@ class GameController {
 		];
 		this.currentPlayer = this.players[0];
 		this.gameActive = true;
+		this.scores = { X: 0, O: 0 };
 		this.gameboard.reset();
 
 		return this.currentPlayer;
@@ -79,6 +81,7 @@ class GameController {
 
 		if (winningCombination) {
 			this.gameActive = false;
+			this.scores[this.currentPlayer.mark] += 1;
 			return {
 				status: "winner",
 				player: this.currentPlayer,
@@ -95,6 +98,10 @@ class GameController {
 			? this.players[1]
 			: this.players[0];
 		return { status: "continue", player: this.currentPlayer };
+	}
+
+	getScores() {
+		return { ...this.scores };
 	}
 
 	restartGame() {
@@ -117,12 +124,17 @@ class DisplayController {
 		this.playerOneNameInput = document.querySelector("#playerOneName");
 		this.playerTwoNameInput = document.querySelector("#playerTwoName");
 		this.gameStatus = document.querySelector("#gameStatus");
+		this.playerOneCard = document.querySelector("#playerOneCard");
+		this.playerTwoCard = document.querySelector("#playerTwoCard");
+		this.playerOneScore = document.querySelector("#playerOneScore");
+		this.playerTwoScore = document.querySelector("#playerTwoScore");
 		this.boardElement = document.querySelector("#board");
 		this.cells = document.querySelectorAll(".cell");
 		this.resetButton = document.querySelector("#resetButton");
 
 		this.bindEvents();
 		this.renderBoard();
+		this.renderScores();
 		this.setBoardEnabled(false);
 	}
 
@@ -149,6 +161,24 @@ class DisplayController {
 		});
 	}
 
+	renderScores() {
+		const scores = this.gameController.getScores();
+
+		if (this.gameController.players.length === 0) {
+			this.playerOneScore.textContent = "Waiting";
+			this.playerTwoScore.textContent = "Waiting";
+			return;
+		}
+
+		this.playerOneScore.textContent = `${this.gameController.players[0].name}: ${scores.X}`;
+		this.playerTwoScore.textContent = `${this.gameController.players[1].name}: ${scores.O}`;
+	}
+
+	setActivePlayer(player) {
+		this.playerOneCard.classList.toggle("player-card--active", player?.mark === "X");
+		this.playerTwoCard.classList.toggle("player-card--active", player?.mark === "O");
+	}
+
 	setBoardEnabled(isEnabled) {
 		this.cells.forEach((cell) => {
 			cell.disabled = !isEnabled;
@@ -159,7 +189,10 @@ class DisplayController {
 		if (result.status === "winner") {
 			this.gameStatus.textContent = `${result.player.name} wins!`;
 			this.gameStatus.classList.add("game-status--result");
+			this.resetButton.textContent = "Play Again";
+			this.setActivePlayer(null);
 			this.highlightWinningCells(result.winningCombination);
+			this.renderScores();
 			this.setBoardEnabled(false);
 			return;
 		}
@@ -167,12 +200,16 @@ class DisplayController {
 		if (result.status === "tie") {
 			this.gameStatus.textContent = "It's a tie!";
 			this.gameStatus.classList.add("game-status--result");
+			this.gameStatus.classList.add("game-status--draw");
+			this.resetButton.textContent = "Play Again";
+			this.setActivePlayer(null);
 			this.setBoardEnabled(false);
 			return;
 		}
 
 		if (result.status === "continue") {
 			this.gameStatus.textContent = `${result.player.name}'s turn`;
+			this.setActivePlayer(result.player);
 		}
 	}
 
@@ -186,8 +223,12 @@ class DisplayController {
 			);
 
 			this.renderBoard();
+			this.renderScores();
 			this.setBoardEnabled(true);
 			this.gameStatus.classList.remove("game-status--result");
+			this.gameStatus.classList.remove("game-status--draw");
+			this.resetButton.textContent = "Restart Game";
+			this.setActivePlayer(currentPlayer);
 			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
 		});
 
@@ -214,8 +255,12 @@ class DisplayController {
 			}
 
 			this.renderBoard();
+			this.renderScores();
 			this.setBoardEnabled(true);
 			this.gameStatus.classList.remove("game-status--result");
+			this.gameStatus.classList.remove("game-status--draw");
+			this.resetButton.textContent = "Restart Game";
+			this.setActivePlayer(currentPlayer);
 			this.gameStatus.textContent = `${currentPlayer.name}'s turn`;
 		});
 	}

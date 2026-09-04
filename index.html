@@ -27,6 +27,23 @@
 
         <p id="gameStatus" aria-live="polite">Enter player names to start.</p>
 
+        <section class="scoreboard" aria-label="Player scores">
+            <div class="player-card player-card--x" id="playerOneCard">
+                <span class="player-mark" aria-hidden="true">X</span>
+                <div>
+                    <span class="player-label">Player 1</span>
+                    <strong id="playerOneScore">Waiting</strong>
+                </div>
+            </div>
+            <div class="player-card player-card--o" id="playerTwoCard">
+                <span class="player-mark" aria-hidden="true">O</span>
+                <div>
+                    <span class="player-label">Player 2</span>
+                    <strong id="playerTwoScore">Waiting</strong>
+                </div>
+            </div>
+        </section>
+
         <div class="board" id="board" aria-label="Tic Tac Toe board">
             <button class="cell" type="button" data-index="0" aria-label="Cell 1"></button>
             <button class="cell" type="button" data-index="1" aria-label="Cell 2"></button>
