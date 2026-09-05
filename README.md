@@ -1,55 +1,53 @@
-# Tic Tac Toe
+# 🎮 Tic Tac Toe
 
-## Description
+A responsive two-player Tic Tac Toe game built with **HTML, CSS, and Vanilla JavaScript** as part of my JavaScript learning journey through **The Odin Project**.
 
-A two-player Tic Tac Toe browser game built as a JavaScript learning project inspired by The Odin Project.
+🌐 **[Live Demo](https://snehavyas-dev.github.io/Tic-Tac-Toe/)**
 
-## Features
+---
 
-- Two player name inputs
-- X and O turns
-- Occupied-cell protection
-- Win detection for rows, columns, and diagonals
-- Tie detection
-- Start and restart controls
-- Responsive layout
-- Keyboard focus styles and semantic buttons
+## ✨ Features
 
-## Technologies Used
+- 👥 Two-player gameplay
+- ✏️ Custom player names
+- ❌ X and O turn management
+- 🏆 Automatic win detection
+- 🤝 Tie/draw detection
+- 🚫 Prevents moves on occupied cells
+- 🔄 Restart the game anytime
+- 📱 Responsive layout
+- ⌨️ Keyboard-friendly controls
+- 🧩 Organized JavaScript game logic
 
-- HTML
-- CSS
-- Vanilla JavaScript
-- Git
+---
 
-## How to Play
+## 🛠️ Technologies Used
 
-1. Enter a name for each player.
-2. Select **Start Game**.
-3. Players take turns selecting empty cells.
-4. The first player to complete a row, column, or diagonal wins.
-5. Select **Restart Game** to play again with the same names.
+- **HTML5** – Structure and semantic elements
+- **CSS3** – Styling and responsive layout
+- **JavaScript (Vanilla JS)** – Game logic and DOM interaction
+- **Git & GitHub** – Version control and project hosting
 
-## Project Structure
+---
 
-- `index.html` contains the page structure and controls.
-- `style.css` contains the responsive layout and visual styling.
-- `script.js` contains the Gameboard, Player, GameController, and DisplayController logic.
-- `.github/agents/javascript-mentor.agent.md` contains the project-specific JavaScript mentoring agent.
+## 🎮 How to Play
 
-## What I Learned
+1. Enter a name for **Player 1**.
+2. Enter a name for **Player 2**.
+3. Click **Start Game**.
+4. Players take turns placing **X** and **O**.
+5. The first player to complete a row, column, or diagonal wins.
+6. If all cells are filled without a winner, the game ends in a draw.
+7. Click **Restart Game** to play again.
 
-- Organizing game state with an IIFE and private variables
-- Creating players with a factory function
-- Separating game rules from DOM logic
-- Using arrays, `some()`, and `every()` for win and tie detection
-- Handling forms and click events with the DOM
-- Preventing invalid moves and managing game state
-- Testing browser behavior and using Git milestones
+---
 
-## Future Improvements
+## 📁 Project Structure
 
-- Add a visible winning-line highlight
-- Add a score counter across rounds
-- Add an optional computer opponent
-- Add more automated tests for the game rules
+```text
+Tic-Tac-Toe/
+│
+├── index.html      # Game structure and player controls
+├── style.css       # Styling and responsive layout
+├── script.js       # Game logic and DOM functionality
+└── README.md       # Project documentation
